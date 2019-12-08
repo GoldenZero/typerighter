@@ -2,7 +2,9 @@ import java.io.File
 
 import scala.concurrent.Future
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.auth.{AWSCredentialsProviderChain, InstanceProfileCredentialsProvider}
+import com.amazonaws.auth.{AWSCredentialsProvider, AWSCredentialsProviderChain, InstanceProfileCredentialsProvider}
+import com.amazonaws.services.s3.AmazonS3ClientBuilder
+import com.gu.pandomainauth.PublicSettings
 import com.gu.{AppIdentity, AwsIdentity}
 import controllers.{ApiController, HomeController, RulesController}
 import play.api.ApplicationLoader.Context
@@ -16,7 +18,7 @@ import services.{ElkLogging, LanguageToolFactory, MatcherPool}
 import services._
 import utils.Loggable
 
-class AppComponents(context: Context, identity: AppIdentity)
+class AppComponents(context: Context, identity: AppIdentity, creds: AWSCredentialsProvider)
   extends BuiltInComponentsFromContext(context)
   with HttpFiltersComponents
   with CORSComponents
@@ -46,9 +48,12 @@ class AppComponents(context: Context, identity: AppIdentity)
   val range = configuration.get[String]("typerighter.sheetRange")
   val ruleResource = new SheetsRuleResource(credentials, spreadsheetId, range)
 
+  private val s3Client = AmazonS3ClientBuilder.standard().withCredentials(creds).withRegion(AppIdentity.region).build()
+  val publicSettings = new PublicSettings("", "pan-domain-auth-settings", s3Client)
+  publicSettings.start()
 
-  val apiController = new ApiController(controllerComponents, matcherPool)
-  val rulesController = new RulesController(controllerComponents, matcherPool, languageToolFactory, ruleResource, spreadsheetId)
+  val apiController = new ApiController(controllerComponents, matcherPool, publicSettings)
+  val rulesController = new RulesController(controllerComponents, matcherPool, languageToolFactory, ruleResource, spreadsheetId, publicSettings)
   val homeController = new HomeController(controllerComponents)
 
   initialiseMatchers

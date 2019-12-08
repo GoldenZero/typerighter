@@ -51,6 +51,7 @@ libraryDependencies ++= Seq(
   "org.languagetool" % "languagetool-core" % languageToolVersion,
   "org.languagetool" % "language-en" % languageToolVersion,
   "com.amazonaws" % "aws-java-sdk-ec2" % awsSdkVersion,
+  "com.amazonaws" % "aws-java-sdk-s3" % awsSdkVersion,
   "com.amazonaws" % "aws-java-sdk-ssm" % awsSdkVersion,
   "com.amazonaws" % "aws-java-sdk-kinesis" % awsSdkVersion,
   "com.google.api-client" % "google-api-client" % "1.23.0",
@@ -59,7 +60,8 @@ libraryDependencies ++= Seq(
   "net.logstash.logback" % "logstash-logback-encoder" % "6.0",
   "com.gu" % "kinesis-logback-appender" % "1.4.4",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
-  "org.webjars" % "bootstrap" % "4.3.1"
+  "org.webjars" % "bootstrap" % "4.3.1",
+  "com.gu" %% "pan-domain-auth-verification" % "0.9.1"
 )
 
 scalaVersion := "2.12.8"
