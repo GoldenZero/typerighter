@@ -8,7 +8,7 @@ import scala.collection.JavaConverters._
 object RuleMatch {
   def fromLT(lt: LTRuleMatch, block: TextBlock): RuleMatch = {
     RuleMatch(
-      rule = LTRule.fromLT(lt.getRule),
+      rules = List(LTRule.fromLT(lt.getRule)),
       fromPos = lt.getFromPos,
       toPos = lt.getToPos,
       matchedText = block.text.substring(lt.getFromPos, lt.getToPos),
@@ -19,7 +19,7 @@ object RuleMatch {
   }
 
   implicit val writes: Writes[RuleMatch] = Writes[RuleMatch]((ruleMatch: RuleMatch) => Json.obj(
-      "rule" -> BaseRule.toJson(ruleMatch.rule),
+      "rules" -> ruleMatch.rules.map(BaseRule.toJson),
       "fromPos"-> ruleMatch.fromPos,
       "toPos" -> ruleMatch.toPos,
       "matchedText" -> ruleMatch.matchedText,
@@ -31,7 +31,7 @@ object RuleMatch {
   )
 }
 
-case class RuleMatch(rule: BaseRule,
+case class RuleMatch(rules: List[BaseRule],
                      fromPos: Int,
                      toPos: Int,
                      matchedText: String,

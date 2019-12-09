@@ -91,9 +91,10 @@ class MatcherPoolTest extends AsyncFlatSpec with Matchers {
     ruleSpec.map {
       case (from, to, message) =>
         RuleMatch(
-          rule = responseRule,
+          rules = List(responseRule),
           fromPos = from,
           toPos = to,
+          matchedText = "example text",
           message = message
         )
     }
